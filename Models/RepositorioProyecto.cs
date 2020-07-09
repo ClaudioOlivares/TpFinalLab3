@@ -27,8 +27,8 @@ namespace TpFinalLab3.Models
             int res = -1;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sql = $"INSERT INTO Proyecto (Titulo,Genero,Status,Plataforma,FechaCreacion,IdUser,Portada) " +
-                    $"VALUES (@titulo,@genero,@status,@plataforma, @fechaCreacion, @idUser,@portada);" +
+                string sql = $"INSERT INTO Proyecto (Titulo,Genero,Status,Plataforma,FechaCreacion,IdUser,Portada,Video) " +
+                    $"VALUES (@titulo,@genero,@status,@plataforma, @fechaCreacion, @idUser,@portada,@video);" +
                     $"SELECT SCOPE_IDENTITY();";//devuelve el id insertado
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -40,6 +40,9 @@ namespace TpFinalLab3.Models
                     command.Parameters.AddWithValue("@fechaCreacion", p.FechaCreacion);
                     command.Parameters.AddWithValue("@idUser", p.IdUser);
                     command.Parameters.AddWithValue("@portada", p.Portada);
+                    command.Parameters.AddWithValue("@video", p.Video);
+
+
 
 
 
@@ -59,7 +62,7 @@ namespace TpFinalLab3.Models
             int res = -1;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sql = $"UPDATE Proyecto SET Titulo = @titulo,Genero = @genero,Status = @status,Plataforma = @plataforma,FechaCreacion = @fechaCreacion,IdUser = @idUser,Portada = @portada " +
+                string sql = $"UPDATE Proyecto SET Titulo = @titulo,Genero = @genero,Status = @status,Plataforma = @plataforma,FechaCreacion = @fechaCreacion,IdUser = @idUser,Portada = @portada , Video = @video " +
                     $"WHERE IdProyecto = @idProyecto";
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -72,6 +75,8 @@ namespace TpFinalLab3.Models
                     command.Parameters.AddWithValue("@idUser", p.IdUser);
                     command.Parameters.AddWithValue("@portada", p.Portada);
                     command.Parameters.AddWithValue("@idProyecto", p.IdProyecto);
+                    command.Parameters.AddWithValue("@video", p.Video);
+
                     connection.Open();
                     res = command.ExecuteNonQuery();
                     connection.Close();

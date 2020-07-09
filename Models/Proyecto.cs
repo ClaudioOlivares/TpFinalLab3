@@ -20,6 +20,9 @@ namespace TpFinalLab3.Models
         public String  Portada { get; set; }
         [NotMapped]
         public IFormFile PortadaFile { get; set; }
+        public String Video { get; set; }
+        [NotMapped]
+        public IFormFile VideoFile { get; set; }
         public int IdUser { get; set; }
         [ForeignKey("IdUser")]
         public Usuario User { get; set; }

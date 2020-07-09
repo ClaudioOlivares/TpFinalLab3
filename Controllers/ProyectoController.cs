@@ -49,9 +49,10 @@ namespace TpFinalLab3.Controllers
             try
             {
                 p.Portada = "n";
+                p.Video = "v";
                 int res = repoProyecto.Alta(p);
                 // TODO: Add insert logic here
-                if (p.PortadaFile != null)
+                if (p.PortadaFile != null && p.VideoFile != null)
                 {
                     string wwwpath = enviroment.WebRootPath;
                     string path = Path.Combine(wwwpath, "uploads");
@@ -59,12 +60,20 @@ namespace TpFinalLab3.Controllers
                     {
                         Directory.CreateDirectory(path);
                     }
+                    string videoName = "video_" + res + Path.GetExtension(p.VideoFile.Name);
                     string fileName =  "portada_" + res + Path.GetExtension(p.PortadaFile.FileName);
                     string pathCompleto = Path.Combine(path, fileName);
+                    string pathCompletoVideo = Path.Combine(path, videoName);
                     p.Portada = Path.Combine("uploads", fileName);
-                    using (FileStream stream = new FileStream (pathCompleto, FileMode.Create))
+                    p.Video = Path.Combine("uploads", videoName);
+                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
                     {
                         p.PortadaFile.CopyTo(stream);
+                        
+                    }
+                    using (FileStream stream = new FileStream(pathCompletoVideo, FileMode.Create))
+                    {
+                        p.VideoFile.CopyTo(stream);
                     }
                     p.IdProyecto = res;
                     repoProyecto.Modificacion(p);

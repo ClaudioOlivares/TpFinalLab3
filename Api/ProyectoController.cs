@@ -14,7 +14,7 @@ using TpFinalLab3.Models;
 namespace TpFinalLab3.Api
 {
     [Route("api/[controller]")]
-   // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class ProyectoController : ControllerBase
     {
@@ -30,9 +30,9 @@ namespace TpFinalLab3.Api
         [HttpGet ]
         public async Task<ActionResult<IEnumerable<Proyecto>>> Get()
         {
-           
-            return context.Proyecto.Include(x=>x.User).ToList();
-         
+            var j = context.User.FirstOrDefault(x => x.Email == User.Identity.Name);
+
+            return context.Proyecto.Where(x => x.IdUser == j.IdUser).ToList();        
         }   
 
         // GET: api/Proyecto/5

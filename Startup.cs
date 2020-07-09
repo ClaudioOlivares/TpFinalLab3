@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TpFinalLab3.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace TpFinalLab3
 {
@@ -51,12 +52,13 @@ namespace TpFinalLab3
                 };
             });
 
-            services.Configure<CookiePolicyOptions>(options =>
+            services.AddAuthorization(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.AddPolicy("Usuario", policy => policy.RequireClaim(ClaimTypes.Role, "Usuario"));
             });
+
+
+       
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
