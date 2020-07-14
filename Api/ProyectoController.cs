@@ -27,19 +27,30 @@ namespace TpFinalLab3.Api
             this.config = config;
         }
         // GET: api/Proyecto
-        [HttpGet ]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Proyecto>>> Get()
         {
             var j = context.User.FirstOrDefault(x => x.Email == User.Identity.Name);
 
-            return context.Proyecto.Where(x => x.IdUser == j.IdUser).ToList();        
-        }   
+            return context.Proyecto.Where(x => x.IdUser == j.IdUser).ToList();
+        }
 
         // GET: api/Proyecto/5
-        [HttpGet("{id}", Name = "GetProyecto")]
-        public string Get(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Proyecto>> Get(int id)
         {
-            return "value";
+            try
+            {
+                var j = context.Proyecto.Include(x=> x.User).FirstOrDefault(x => x.IdProyecto == id);
+
+                return Ok(j);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
         }
 
         // POST: api/Proyecto

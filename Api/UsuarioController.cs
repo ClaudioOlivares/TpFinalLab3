@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TpFinalLab3.Models;
+using System.Drawing.Common;
+using System.Net;
 
 namespace TpFinalLab3.Api
 {
@@ -37,7 +40,9 @@ namespace TpFinalLab3.Api
             
             try
             {
-                return Ok(context.User);
+                var j = context.User.FirstOrDefault(x => x.Email == User.Identity.Name);
+
+                return Ok(j);
                
             }
             catch (System.Exception ex)
@@ -119,5 +124,42 @@ namespace TpFinalLab3.Api
                 return BadRequest(ex);
             }
         }
+
+
+
+        [HttpPost("checkear")]
+        public async Task<IActionResult> checkear (CheckPerfilView perfil)
+        {
+            try
+            {
+
+                var j = context.User.FirstOrDefault(x => x.Email == perfil.Email);
+                if (j == null)
+                {
+                    return Ok("false");
+                }
+                else
+                {
+                    return Ok("true");
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+               return BadRequest(ex);
+            }
+        }
+
+
+        [HttpPost("actualizar")]
+        public async Task<IActionResult> actualizar(EditPerfilView perfil)
+        {
+            byte[] bytes = Convert.FromBase64String(perfil.imgBites);
+
+
+            return Ok("hola");
+        }
     }
+
 }

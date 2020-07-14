@@ -12,6 +12,8 @@ namespace TpFinalLab3.Models
         {
 
         }
+        public DbSet<ImagenProyecto> ImagenProyecto { get; set; }
+        public DbSet<ProyectoItem> ProyectoItem { get; set; }
         public DbSet<Usuario> User { get; set; }
         public DbSet<DevLog> DevLog { get; set; }
         public DbSet<DevLogItem> DevLogItem{ get; set; }

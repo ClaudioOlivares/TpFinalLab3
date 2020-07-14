@@ -25,7 +25,9 @@ namespace TpFinalLab3.Models
         public IFormFile VideoFile { get; set; }
         public int IdUser { get; set; }
         [ForeignKey("IdUser")]
-        public Usuario User { get; set; }
-
+        public Usuario User { get; set; }    
+        public String  TextoResumen { get; set; }
+        public String TextoCompleto{ get; set; }
+        public String VideoTrailer { get; set; }
     }
 }

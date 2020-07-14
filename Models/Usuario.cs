@@ -16,6 +16,7 @@ namespace TpFinalLab3.Models
         public string Email { get; set; }
         public string Nacionalidad { get; set; }
         public string Clave { get; set; }
+        public string Avatar { get; set; }
 
     }
 }
