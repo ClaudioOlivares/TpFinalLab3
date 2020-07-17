@@ -17,6 +17,6 @@ namespace TpFinalLab3.Models
         public string Nacionalidad { get; set; }
         public string Clave { get; set; }
         public string Avatar { get; set; }
-        public string imgBites { get; set; }
+        public string imgBytes { get; set; }
     }
 }

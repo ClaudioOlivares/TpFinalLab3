@@ -13,8 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TpFinalLab3.Models;
-using System.Drawing.Common;
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace TpFinalLab3.Api
 {
@@ -26,10 +27,12 @@ namespace TpFinalLab3.Api
     {
         private readonly DataContext context;
         private readonly IConfiguration config;
+        private readonly IHostingEnvironment enviroment;
 
-        public UsuarioController(DataContext context,IConfiguration config)
+
+        public UsuarioController(DataContext context,IConfiguration config, IHostingEnvironment enviroment)
         {
-           
+            this.enviroment = enviroment;
             this.context = context;
             this.config = config;
         }
@@ -152,13 +155,64 @@ namespace TpFinalLab3.Api
         }
 
 
-        [HttpPost("actualizar")]
-        public async Task<IActionResult> actualizar(EditPerfilView perfil)
+        [HttpPut("actualizar")]
+        public async Task<IActionResult> actualizar(Usuario perfil)
         {
-            byte[] bytes = Convert.FromBase64String(perfil.imgBites);
+            try
+            {
+                var x = context.User.AsNoTracking().FirstOrDefault(e => e.Email == User.Identity.Name);
 
+                if(x != null && x.Email == perfil.Email)
+                {
+                    byte[] bytes = Convert.FromBase64String(perfil.Avatar);
 
-            return Ok("hola");
+                    string wwwpath = enviroment.WebRootPath;
+
+                    string path = Path.Combine(wwwpath, "uploads");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    string fileName = "Avatar_" + x.IdUser.ToString() + ".jpg";
+
+                    string pathCompleto = Path.Combine(path, fileName);
+
+                    System.IO.File.Delete(pathCompleto);
+
+                    using (var imageFile = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        imageFile.Write(bytes, 0, bytes.Length);
+
+                        imageFile.CopyTo(imageFile);
+
+                        imageFile.Flush();
+
+                    }
+
+                    perfil.IdUser = x.IdUser;
+
+                    perfil.Clave = x.Clave;
+
+                    perfil.Avatar = "uploads/" + fileName;
+
+                    context.User.Update(perfil);
+
+                    context.SaveChanges();
+
+                    return Ok(perfil);
+                }
+                else
+                {
+                    return BadRequest("datos invalidos");
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
         }
     }
 

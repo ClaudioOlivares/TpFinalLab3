@@ -32,7 +32,7 @@ namespace TpFinalLab3.Api
         {
             try
             {
-                var j = context.ImagenProyecto.Include(x => x.ProyectoItem).ToList();
+                var j = context.ImagenProyecto.Include(x => x.Proyecto).ToList();
 
                 return Ok(j);
             }
@@ -44,10 +44,20 @@ namespace TpFinalLab3.Api
         }
 
         // GET: api/ImagenProyecto/5
-        [HttpGet("{id}", Name = "GetImagenProyecto")]
-        public string Get(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ImagenProyecto>> Get(int id)
         {
-            return "value";
+            try
+            {
+                var j = context.ImagenProyecto.Include(x => x.Proyecto).Where(x => x.IdProyecto == id).ToList();
+
+                return Ok(j);
+            }
+            catch (Exception ex )
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/ImagenProyecto

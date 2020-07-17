@@ -11,9 +11,9 @@ namespace TpFinalLab3.Models
     {
         [Key]
         public int IdImagenProyecto { get; set; }
-        public int IdProyectoItem { get; set; }
-        [ForeignKey("IdProyectoItem")]
-        public ProyectoItem ProyectoItem { get; set; }
+        public int IdProyecto { get; set; }
+        [ForeignKey("IdProyecto")]
+        public Proyecto Proyecto{ get; set; }
         public String Url { get; set; }
     }
 }
