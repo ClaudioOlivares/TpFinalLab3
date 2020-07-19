@@ -32,7 +32,7 @@ namespace TpFinalLab3.Api
         {
             try
             {
-                var j = context.ImagenProyecto.Include(x => x.Proyecto).ToList();
+                var j = context.ImagenProyecto.Include(x => x.Proyecto).ThenInclude(x=>x.User).ToList();
 
                 return Ok(j);
             }
@@ -49,7 +49,7 @@ namespace TpFinalLab3.Api
         {
             try
             {
-                var j = context.ImagenProyecto.Include(x => x.Proyecto).Where(x => x.IdProyecto == id).ToList();
+                var j = context.ImagenProyecto.Include(x => x.Proyecto).ThenInclude(x=>x.User).Where(x => x.IdProyecto == id).ToList();
 
                 return Ok(j);
             }

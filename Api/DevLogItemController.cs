@@ -48,13 +48,17 @@ namespace TpFinalLab3.Api
         {
             try
             {
+
                 var j = context.DevLogItem.Include(x => x.DevLog).Where(x => x.IdDevLog == id);
 
                 return Ok(j);
+
             }
             catch (Exception ex)
             {
+
                 return BadRequest(ex.Message);
+
             }
         }
 

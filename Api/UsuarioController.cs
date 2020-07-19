@@ -30,7 +30,7 @@ namespace TpFinalLab3.Api
         private readonly IHostingEnvironment enviroment;
 
 
-        public UsuarioController(DataContext context,IConfiguration config, IHostingEnvironment enviroment)
+        public UsuarioController(DataContext context, IConfiguration config, IHostingEnvironment enviroment)
         {
             this.enviroment = enviroment;
             this.context = context;
@@ -40,26 +40,26 @@ namespace TpFinalLab3.Api
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuario>>> Get()
         {
-            
+
             try
             {
                 var j = context.User.FirstOrDefault(x => x.Email == User.Identity.Name);
 
                 return Ok(j);
-               
+
             }
             catch (System.Exception ex)
             {
 
                 return BadRequest(ex);
-            }           
+            }
         }
 
         // GET: api/User/5
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<ActionResult<Usuario>> Get(int id)
         {
-            return context.User.FirstOrDefault(x=>x.IdUser == id);
+            return context.User.FirstOrDefault(x => x.IdUser == id);
         }
 
         // POST: api/User
@@ -130,7 +130,7 @@ namespace TpFinalLab3.Api
 
 
 
-        [HttpPost("checkear")]
+        [HttpPost( "checkear")]
         public async Task<IActionResult> checkear (CheckPerfilView perfil)
         {
             try
