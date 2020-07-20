@@ -30,7 +30,7 @@ namespace TpFinalLab3.Models
         public String TextoResumen { get; set; }
         public String TextoCompleto { get; set; }
         public String VideoTrailer { get; set; }
-        public ImagenProyecto [] imagenes { get; set; }
+        public List<ImagenProyecto> imagenes { get; set; }
 
     }
 }

@@ -105,7 +105,7 @@ namespace TpFinalLab3.Api
         {
             try
             {
-                byte[] bytes = Convert.FromBase64String(p.Video);
+                byte[] bytes = Convert.FromBase64String(p.VideoTrailer);
 
                 string wwwpath = enviroment.WebRootPath;
 
@@ -114,7 +114,11 @@ namespace TpFinalLab3.Api
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
+
                 }
+
+                //------------------------- Video-----------------------------------------//
+
                 string fileName = "IPVideoTrailer_" + p.IdProyecto.ToString() + ".mp4";
 
                 string pathCompleto = Path.Combine(path, fileName);
@@ -132,11 +136,15 @@ namespace TpFinalLab3.Api
 
                 }
 
+                //------------------------------IMAGENES DEL PROYECTO----------------------------------//
+
                 foreach (ImagenProyecto item in p.imagenes)
                 {
+                    int numeroimagen = 1;
+
                     byte[] bytesImagen = Convert.FromBase64String(item.Url);
 
-                    string ImagenName = "ProyectoImg" + item.IdImagenProyecto.ToString() + "_" + p.IdProyecto.ToString();
+                    string ImagenName = "ProyectoImg" + numeroimagen + "_" + p.IdProyecto.ToString();
 
                     string pathCompletoimg = Path.Combine(path, ImagenName);
 
@@ -152,6 +160,48 @@ namespace TpFinalLab3.Api
                         imageFile.Flush();
 
                     }
+
+                    numeroimagen++;
+                }
+
+                //---------------------------------------------PORTADA---------------------------------//
+
+                byte[] bytesImagenPortada = Convert.FromBase64String(p.Portada);
+
+                string fileNamePortada = "portada_" + p.IdProyecto.ToString() + ".jpg";
+
+                string pathCompletoPortada = Path.Combine(path, fileNamePortada);
+
+                System.IO.File.Delete(pathCompletoPortada);
+
+                using (var imageFilePortada = new FileStream(pathCompletoPortada, FileMode.Create))
+                {
+                    imageFilePortada.Write(bytesImagenPortada, 0, bytesImagenPortada.Length);
+
+                    imageFilePortada.CopyTo(imageFilePortada);
+
+                    imageFilePortada.Flush();
+
+                }
+
+                //------------------------------------------- VIDEO CORTO --------------------------------------------------
+
+                byte[] bytesVideoCorto = Convert.FromBase64String(p.Video);
+
+                string fileNameVideoCorto = "video_" + p.IdProyecto.ToString() + ".mp4";
+
+                string pathCompletoVideoCorto = Path.Combine(path, fileNameVideoCorto);
+
+                System.IO.File.Delete(pathCompletoVideoCorto);
+
+                using (var videoFileVideoCorto = new FileStream(pathCompletoVideoCorto, FileMode.Create))
+                {
+                    videoFileVideoCorto.Write(bytesVideoCorto, 0, bytesVideoCorto.Length);
+
+                    videoFileVideoCorto.CopyTo(videoFileVideoCorto);
+
+                    videoFileVideoCorto.Flush();
+
                 }
 
                 var j = context.Proyecto.Include(x => x.User).FirstOrDefault(x => x.User.Email == User.Identity.Name);
@@ -167,6 +217,7 @@ namespace TpFinalLab3.Api
                 j.Plataforma = p.Plataforma;
 
                 j.Status = p.Status;
+
 
                 context.Proyecto.Update(j);
 
