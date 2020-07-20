@@ -103,13 +103,14 @@ namespace TpFinalLab3.Api
         [HttpPut("actualizar")]
         public async Task<IActionResult> actualizar(ProyectoMasImagenesView p)
         {
+            int numeroimagen = 1;
+
             try
             {
-                byte[] bytes = Convert.FromBase64String(p.VideoTrailer);
-
                 string wwwpath = enviroment.WebRootPath;
 
                 string path = Path.Combine(wwwpath, "uploads");
+
 
                 if (!Directory.Exists(path))
                 {
@@ -119,32 +120,38 @@ namespace TpFinalLab3.Api
 
                 //------------------------- Video-----------------------------------------//
 
-                string fileName = "IPVideoTrailer_" + p.IdProyecto.ToString() + ".mp4";
-
-                string pathCompleto = Path.Combine(path, fileName);
-
-                System.IO.File.Delete(pathCompleto);
-
-
-                using (var videoFile = new FileStream(pathCompleto, FileMode.Create))
+                if (p.VideoTrailer != null)
                 {
-                    videoFile.Write(bytes, 0, bytes.Length);
+                    byte[] bytes = Convert.FromBase64String(p.VideoTrailer);
 
-                    videoFile.CopyTo(videoFile);
+                    string fileName = "IPVideoTrailer_" + p.IdProyecto.ToString() + ".mp4";
 
-                    videoFile.Flush();
+                    string pathCompleto = Path.Combine(path, fileName);
 
+                    System.IO.File.Delete(pathCompleto);
+
+
+                    using (var videoFile = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        videoFile.Write(bytes, 0, bytes.Length);
+
+                        videoFile.CopyTo(videoFile);
+
+                        videoFile.Flush();
+
+                    }
                 }
+                            
 
                 //------------------------------IMAGENES DEL PROYECTO----------------------------------//
 
                 foreach (ImagenProyecto item in p.imagenes)
                 {
-                    int numeroimagen = 1;
+                    
 
                     byte[] bytesImagen = Convert.FromBase64String(item.Url);
 
-                    string ImagenName = "ProyectoImg" + numeroimagen + "_" + p.IdProyecto.ToString();
+                    string ImagenName = "ProyectoImg" + numeroimagen + "_" + p.IdProyecto.ToString() + ".jpg";
 
                     string pathCompletoimg = Path.Combine(path, ImagenName);
 
@@ -185,24 +192,27 @@ namespace TpFinalLab3.Api
                 }
 
                 //------------------------------------------- VIDEO CORTO --------------------------------------------------
-
-                byte[] bytesVideoCorto = Convert.FromBase64String(p.Video);
-
-                string fileNameVideoCorto = "video_" + p.IdProyecto.ToString() + ".mp4";
-
-                string pathCompletoVideoCorto = Path.Combine(path, fileNameVideoCorto);
-
-                System.IO.File.Delete(pathCompletoVideoCorto);
-
-                using (var videoFileVideoCorto = new FileStream(pathCompletoVideoCorto, FileMode.Create))
+                if(p.Video != null)
                 {
-                    videoFileVideoCorto.Write(bytesVideoCorto, 0, bytesVideoCorto.Length);
+                    byte[] bytesVideoCorto = Convert.FromBase64String(p.Video);
 
-                    videoFileVideoCorto.CopyTo(videoFileVideoCorto);
+                    string fileNameVideoCorto = "video_" + p.IdProyecto.ToString() + ".mp4";
 
-                    videoFileVideoCorto.Flush();
+                    string pathCompletoVideoCorto = Path.Combine(path, fileNameVideoCorto);
 
-                }
+                    System.IO.File.Delete(pathCompletoVideoCorto);
+
+                    using (var videoFileVideoCorto = new FileStream(pathCompletoVideoCorto, FileMode.Create))
+                    {
+                        videoFileVideoCorto.Write(bytesVideoCorto, 0, bytesVideoCorto.Length);
+
+                        videoFileVideoCorto.CopyTo(videoFileVideoCorto);
+
+                        videoFileVideoCorto.Flush();
+
+                    }
+
+                }          
 
                 var j = context.Proyecto.Include(x => x.User).FirstOrDefault(x => x.User.Email == User.Identity.Name);
 
@@ -223,7 +233,7 @@ namespace TpFinalLab3.Api
 
                 context.SaveChanges();
 
-                return Ok("Perfil Actualizado");
+                return Ok(j);
             }
             catch (Exception ex)
             {
