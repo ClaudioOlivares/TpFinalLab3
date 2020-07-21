@@ -60,6 +60,23 @@ namespace TpFinalLab3.Api
             }
         }
 
+        [HttpPost("{id}")]
+        public async Task<ActionResult<IEnumerable<DevLog>>> GetDevlog([FromBody]int id)
+        {
+            try
+            {
+                var j = context.DevLog.Include(x => x.Proyecto).FirstOrDefault(x => x.IdDevLog == id);
+
+                return Ok(j);
+            }
+
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
         // POST: api/DevLog
         [HttpPost]
         public void Post([FromBody] string value)
@@ -76,6 +93,57 @@ namespace TpFinalLab3.Api
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        [HttpPost("checkear")]
+        public async Task<IActionResult> checkear([FromBody] int id)
+        {
+            try
+            {
+                var j = context.DevLog.Include(x => x.Proyecto).ThenInclude(x => x.User).FirstOrDefault(x => x.Proyecto.User.Email == User.Identity.Name && x.Proyecto.IdProyecto == id);
+
+                if (j == null)
+                {
+                    return Ok("false");
+                }
+                else
+                {
+                    return Ok("true");
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
+        }
+
+
+        [HttpPut("actualizar")]
+        public async Task<IActionResult> actualizar(DevLog devlog)
+        {
+            try
+            {
+                var j = context.DevLog.Include(x => x.Proyecto).ThenInclude(x => x.User).FirstOrDefault(x => x.IdDevLog == devlog.IdDevLog);
+
+                j.Titulo = devlog.Titulo;
+
+                j.Resumen = devlog.Resumen;
+
+                context.DevLog.Update(j);
+
+                context.SaveChanges();
+
+                return Ok(j);
+
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e);
+            }
+            
         }
     }
 }
