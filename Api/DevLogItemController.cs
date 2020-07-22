@@ -128,10 +128,10 @@ namespace TpFinalLab3.Api
 
         [HttpPut("actualizar")]
         public async Task<IActionResult> actualizar(DevLogItem d)
-        {
+         {
             try
             {
-                var j = context.DevLogItem.Include(x => x.DevLog).FirstOrDefault(x => x.IdDevLog == d.IdDevLog);
+                var j = context.DevLogItem.Include(x => x.DevLog).ThenInclude(x=>x.Proyecto).FirstOrDefault(x => x.IdDevLogItem == d.IdDevLogItem);
 
                 j.Texto = d.Texto;
 
@@ -150,7 +150,7 @@ namespace TpFinalLab3.Api
 
                 byte[] bytes = Convert.FromBase64String(d.Multimedia);
 
-                string fileName = "ItemDevLog" + d.IdDevLogItem.ToString()+ "_" + d.IdDevLog + ".jpg";
+                string fileName = "ItemDevLog" + d.IdDevLogItem.ToString()+ "_" + j.IdDevLog + ".jpg";
 
                 string pathCompleto = Path.Combine(path, fileName);
 
@@ -159,11 +159,11 @@ namespace TpFinalLab3.Api
 
                 using (var imageFile = new FileStream(pathCompleto, FileMode.Create))
                 {
-                    imageFile.Write(bytes, 0, bytes.Length);
+                   imageFile.Write(bytes, 0, bytes.Length);
 
-                    imageFile.CopyTo(imageFile);
+                   imageFile.CopyTo(imageFile);
 
-                    imageFile.Flush();
+                   imageFile.Flush();
 
                 }
 
@@ -171,7 +171,7 @@ namespace TpFinalLab3.Api
 
                 context.SaveChanges();
 
-                return Ok();
+                return Ok(j);
             }
             catch (Exception e)
             {
