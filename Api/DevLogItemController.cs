@@ -68,8 +68,55 @@ namespace TpFinalLab3.Api
 
         // POST: api/DevLogItem
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> Post (DevLogItem dli)
         {
+            try
+            {
+                string wwwpath = enviroment.WebRootPath;
+
+                string path = Path.Combine(wwwpath, "uploads");
+
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+
+                }
+                byte[] bytes = Convert.FromBase64String(dli.Multimedia);
+
+                dli.Multimedia = "A"; // para que no guarde semejante cadena
+
+                context.DevLogItem.Add(dli);
+
+                context.SaveChanges();
+
+                string fileName = "ItemDevLog" + dli.IdDevLogItem.ToString() + "_" + dli.IdDevLog + ".jpg";
+
+                string pathCompleto = Path.Combine(path, fileName);
+
+                using (var imageFile = new FileStream(pathCompleto, FileMode.Create))
+                {
+                    imageFile.Write(bytes, 0, bytes.Length);
+
+                    imageFile.CopyTo(imageFile);
+
+                    imageFile.Flush();
+
+                }
+
+                dli.Multimedia = "uploads/" + fileName;
+
+                context.DevLogItem.Update(dli);
+
+                context.SaveChanges();
+
+                return Ok(dli);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
         }
 
         // PUT: api/DevLogItem/5
@@ -80,8 +127,32 @@ namespace TpFinalLab3.Api
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            try
+            {
+                var devlogitem = context.DevLogItem.Include(x => x.DevLog).FirstOrDefault(x => x.IdDevLogItem == id);
+
+                string wwwpath = enviroment.WebRootPath;
+
+                String PathCompleto = wwwpath + "/" + devlogitem.Multimedia;
+
+                System.IO.File.Delete(PathCompleto);
+
+                context.DevLogItem.Remove(devlogitem);
+
+                context.SaveChanges();
+
+                var j = context.DevLogItem.Include(x => x.DevLog).Last();
+
+                return Ok(j);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
+
         }
 
         [HttpPost("checkear")]
